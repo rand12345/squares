@@ -11,18 +11,18 @@ fn main() {
     top_squares.iter().for_each(|s| println!("{}", s));
 }
 
-fn read_csv(file_path: &str) -> [[u32; 1000]; 1000] {
+fn read_csv(file_path: &str) -> [[u8; 1000]; 1000] {
     let file = match File::open(file_path) {
         Ok(f) => f,
         Err(_) => {
             println!("test.csv dataset not found, generating random dataset");
             let mut rng = thread_rng();
-            let mut grid: [[u32; 1000]; 1000] = [[0; 1000]; 1000];
+            let mut grid: [[u8; 1000]; 1000] = [[0; 1000]; 1000];
             const SIZE: usize = 1000;
             for i in 0..SIZE {
                 let mut row = [0; 1000];
                 for j in 0..SIZE {
-                    row[j] = rng.gen_range(0..=255);
+                    row[j] = rng.gen_range(0..=100);
                 }
                 grid[i] = row;
             }
@@ -30,11 +30,11 @@ fn read_csv(file_path: &str) -> [[u32; 1000]; 1000] {
         }
     };
     let reader = BufReader::new(file);
-    let mut grid: [[u32; 1000]; 1000] = [[0; 1000]; 1000];
+    let mut grid: [[u8; 1000]; 1000] = [[0; 1000]; 1000];
 
     for (row, line) in reader.lines().enumerate() {
         let line = line.unwrap();
-        let mut values: [u32; 1000] = [0; 1000];
+        let mut values: [u8; 1000] = [0; 1000];
 
         for (col, s) in line.split(',').enumerate() {
             values[col] = s.parse().expect("Unable to parse number");
@@ -63,7 +63,7 @@ impl Display for Square {
     }
 }
 
-pub fn find_top_five_prosperous_squares(grid: &[[u32; 1000]; 1000]) -> Vec<Square> {
+pub fn find_top_five_prosperous_squares(grid: &[[u8; 1000]; 1000]) -> Vec<Square> {
     let mut top_squares = Vec::with_capacity(5);
     for row in 0..990 {
         let mut current_value = calculate_square_value(&grid, row, 0);
@@ -73,8 +73,8 @@ pub fn find_top_five_prosperous_squares(grid: &[[u32; 1000]; 1000]) -> Vec<Squar
                 let mut removed_value = 0;
                 let mut added_value = 0;
                 for r in row..row + 10 {
-                    removed_value += grid[r][col - 1];
-                    added_value += grid[r][col + 9];
+                    removed_value += grid[r][col - 1] as u32;
+                    added_value += grid[r][col + 9] as u32;
                 }
                 current_value = current_value - removed_value + added_value;
             }
@@ -97,11 +97,11 @@ pub fn find_top_five_prosperous_squares(grid: &[[u32; 1000]; 1000]) -> Vec<Squar
     top_squares
 }
 
-fn calculate_square_value(grid: &[[u32; 1000]; 1000], row: usize, col: usize) -> u32 {
+fn calculate_square_value(grid: &[[u8; 1000]; 1000], row: usize, col: usize) -> u32 {
     let mut value = 0_u32;
     for r in row..row + 10 {
         for c in col..col + 10 {
-            value += grid[r][c];
+            value += grid[r][c] as u32;
         }
     }
     value

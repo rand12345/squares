@@ -2,14 +2,14 @@ use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion};
 use rand::{thread_rng, Rng};
 use squares::main::find_top_five_prosperous_squares;
 
-fn generate_random_grid(size: usize) -> [[u32; 1000]; 1000] {
+fn generate_random_grid(size: usize) -> [[u8; 1000]; 1000] {
     let mut rng = thread_rng();
-    let mut grid: [[u32; 1000]; 1000] = [[0; 1000]; 1000];
+    let mut grid: [[u8; 1000]; 1000] = [[0; 1000]; 1000];
 
     for i in 0..size {
         let mut row = [0; 1000];
         for j in 0..size {
-            row[j] = rng.gen_range(0..=255);
+            row[j] = rng.gen_range(0..=100);
         }
         grid[i] = row;
     }
